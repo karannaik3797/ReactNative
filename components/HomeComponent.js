@@ -6,6 +6,7 @@ import { PROMOTIONS } from '../shared/promotions';
 import { LEADERS } from '../shared/leaders';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
+import { Loading } from './LoadingComponent';
 
 const mapStateToProps = state => {
     return {
@@ -19,7 +20,19 @@ const mapStateToProps = state => {
 function RenderItem(props) {
     
         const item = props.item;
-        
+        if (props.isLoading) {
+        return(
+                <Loading />
+        );
+    }
+    else if (props.errMess) {
+        return(
+            <View> 
+                <Text>{props.erreMess}</Text>
+            </View>
+        );
+    }
+    else { 
         if (item != null) {
             return(
                 <Card
@@ -36,6 +49,7 @@ function RenderItem(props) {
             return(<View></View>);
         }
 }
+}
 
 class Home extends Component {
 
@@ -46,12 +60,24 @@ class Home extends Component {
     render() {
         
         return(
+            <React.Fragment>
             <ScrollView>
-                <RenderItem item={this.props.dishes.dishes.filter((dish) => dish.featured)[0]} />
-                <RenderItem item={this.props.promotions.promotions.filter((promo) => promo.featured)[0]} />
-                <RenderItem item={this.props.leaders.leaders.filter((leader) => leader.featured)[0]} />
+               <RenderItem item={this.props.dishes.dishes.filter((dish) => dish.featured)[0]}
+                    isLoading={this.props.dishes.isLoading}
+                    erreMess={this.props.dishes.erreMess} 
+                    />
+                <RenderItem item={this.props.promotions.promotions.filter((promo) => promo.featured)[0]}
+                    isLoading={this.props.promotions.isLoading}
+                    erreMess={this.props.promotions.erreMess} 
+                    />
+                <RenderItem item={this.props.leaders.leaders.filter((leader) => leader.featured)[0]}
+                    isLoading={this.props.leaders.isLoading}
+                    erreMess={this.props.leaders.erreMess} 
+                    />            
             </ScrollView>
+            </React.Fragment>
         );
     }
 }
+
 export default connect(mapStateToProps)(Home);

@@ -1,9 +1,10 @@
 import React,{ Component } from 'react';
-import { View, FlatList,Text } from 'react-native';
+import { ScrollView, View, FlatList,Text } from 'react-native';
 import { ListItem,Card } from 'react-native-elements';
 import { LEADERS } from '../shared/leaders';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
+import { Loading } from './LoadingComponent';
 
 const mapStateToProps = state => {
     return {
@@ -43,21 +44,43 @@ class About extends Component {
                   />
                 ); 
         }
+        if (this.props.leaders.isLoading) {
+            return(
+                <ScrollView>
+                    <History />
+                    <Card
+                        title='Corporate Leadership'>
+                        <Loading />
+                    </Card>
+                </ScrollView>
+            );
+        }
+        else if (this.props.leaders.errMess) {
+            return(
+                <ScrollView>
+                    <History />
+                    <Card
+                        title='Corporate Leadership'>
+                        <Text>{this.props.leaders.errMess}</Text>
+                    </Card>
+                </ScrollView>
+            );
+        }
+        else {
         return(
-            <React.Fragment >
-            <History/>
-            <Card title="Corporate Leadership">
-                <FlatList
-                    ListFooterComponent={<View />}
-                    ListFooterComponentStyle={{height:500}}
-                    style={{margin: 10}} 
-                    data = {this.props.leaders.leaders} 
-                    renderItem={renderLeaders}
-                    keyExtractor={item => item.id.toString()} />
-            </Card>
-            </React.Fragment>
+            <ScrollView>
+                    <History />
+                    <Card
+                        title='Corporate Leadership'>
+                    <FlatList 
+                        data={this.props.leaders.leaders}
+                        renderItem={renderLeaders}
+                        keyExtractor={item => item.id.toString()}
+                        />
+                    </Card>
+                </ScrollView>
             );
     }
 }
-
+}
 export default connect(mapStateToProps)(About);
